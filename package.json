@@ -1,0 +1,43 @@
+{
+  "name": "esports-simulator",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:web": "turbo run dev:bare -F web --",
+    "dev:server": "turbo run dev -F server --",
+    "db:push": "turbo run db:push -F @esports-simulator/db --",
+    "db:studio": "turbo run db:studio -F @esports-simulator/db --",
+    "db:generate": "turbo run db:generate -F @esports-simulator/db --",
+    "db:migrate": "turbo run db:migrate -F @esports-simulator/db --",
+    "db:start": "turbo run db:start -F @esports-simulator/db --",
+    "db:watch": "turbo run db:watch -F @esports-simulator/db --",
+    "db:stop": "turbo run db:stop -F @esports-simulator/db --",
+    "db:down": "turbo run db:down -F @esports-simulator/db --",
+    "deploy": "turbo run deploy -F @esports-simulator/infra --",
+    "destroy": "turbo run destroy -F @esports-simulator/infra --",
+    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
+    "auth:generate": "cd apps/server && pnpm run auth:generate",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.2",
+    "@cloudflare/workers-types": "^5.20260906.1",
+    "@esports-simulator/config": "workspace:*",
+    "@types/node": "^26.4.1",
+    "turbo": "^2.11.7",
+    "typescript": "catalog:",
+    "varlock": "catalog:"
+  },
+  "packageManager": "pnpm@12.14.0"
+}

@@ -1,0 +1,3 @@
+{
+  "extends": "@esports-simulator/config/tsconfig.base.json"
+}
