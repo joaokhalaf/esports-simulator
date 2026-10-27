@@ -1,0 +1,511 @@
+{
+	"id": "4b2b30ceff6dd38d10b3f8b7ded40ec394bc45e883773925ab5ebed405c7cb5c",
+	"importedAt": "2026-10-27T01:33:05.669Z",
+	"source": "riot",
+	"tournamentId": "115660540725177488",
+	"teams": [
+		{
+			"id": "100205573495116443",
+			"name": "Gen.G Esports",
+			"code": "GEN",
+			"image": "https://static.lolesports.com/teams/1773829250929_GENGLOGO_GOLD.png",
+			"region": "kr"
+		},
+		{
+			"id": "100205573496804586",
+			"name": "Hanwha Life Esports",
+			"code": "HLE",
+			"image": "https://static.lolesports.com/teams/1631819564399_hle-2021-worlds.png",
+			"region": "kr"
+		},
+		{
+			"id": "100205576309502431",
+			"name": "FURIA",
+			"code": "FUR",
+			"image": "https://static.lolesports.com/teams/FURIA---black.png",
+			"region": "br"
+		},
+		{
+			"id": "100725845018863243",
+			"name": "Dplus KIA",
+			"code": "DK",
+			"image": "https://static.lolesports.com/teams/1673260049703_DPlusKIALOGO11.png",
+			"region": "kr"
+		},
+		{
+			"id": "103461966965149786",
+			"name": "Movistar KOI",
+			"code": "MKOI",
+			"image": "https://static.lolesports.com/teams/1734012609283_MKOI_FullColor_Blue.png",
+			"region": "emea"
+		},
+		{
+			"id": "107251245690956393",
+			"name": "MVK Esports",
+			"code": "MVK",
+			"image": "https://static.lolesports.com/teams/1767089709161_White_Logo.png",
+			"region": "pac"
+		},
+		{
+			"id": "107700199633958891",
+			"name": "CTBC Flying Oyster",
+			"code": "CFO",
+			"image": "https://static.lolesports.com/teams/1656307849320_CFO_Logo.png",
+			"region": "pac"
+		},
+		{
+			"id": "109480204628225868",
+			"name": "LOS",
+			"code": "LOS",
+			"image": "https://static.lolesports.com/teams/1784013312149_LOS-OLaranja.png",
+			"region": "br"
+		},
+		{
+			"id": "111692118851466302",
+			"name": "Karmine Corp",
+			"code": "KC",
+			"image": "https://static.lolesports.com/teams/1704714951336_KC.png",
+			"region": "emea"
+		},
+		{
+			"id": "113661839307879869",
+			"name": "Team Secret Whales",
+			"code": "TSW",
+			"image": "https://static.lolesports.com/teams/1774598000328_White_EyeText_600p.png",
+			"region": "pac"
+		},
+		{
+			"id": "98767991853197861",
+			"name": "T1",
+			"code": "T1",
+			"image": "https://static.lolesports.com/teams/1726801573959_539px-T1_2019_full_allmode.png",
+			"region": "kr"
+		},
+		{
+			"id": "98767991877340524",
+			"name": "Cloud9 Kia",
+			"code": "C9",
+			"image": "https://static.lolesports.com/teams/1736924120254_C9Kia_IconBlue_Transparent_2000x2000.png",
+			"region": "na"
+		},
+		{
+			"id": "98767991926151025",
+			"name": "G2 Esports",
+			"code": "G2",
+			"image": "https://static.lolesports.com/teams/G2-FullonDark.png",
+			"region": "emea"
+		},
+		{
+			"id": "98926509885559666",
+			"name": "Team Liquid Alienware",
+			"code": "TLAW",
+			"image": "https://static.lolesports.com/teams/1769357207762_TLAlienware_Minimal_Bug-White.png",
+			"region": "na"
+		},
+		{
+			"id": "99566404848691211",
+			"name": "Invictus Gaming",
+			"code": "IG",
+			"image": "https://static.lolesports.com/teams/1634762917340_300px-Invictus_Gaming_logo.png",
+			"region": "cn"
+		},
+		{
+			"id": "99566404853854212",
+			"name": "BILIBILI GAMING",
+			"code": "BLG",
+			"image": "https://static.lolesports.com/teams/1682322954525_Bilibili_Gaming_logo_20211.png",
+			"region": "cn"
+		},
+		{
+			"id": "99566404854685458",
+			"name": "TOP ESPORTS",
+			"code": "TES",
+			"image": "https://static.lolesports.com/teams/1592592064571_TopEsportsTES-01-FullonDark.png",
+			"region": "cn"
+		},
+		{
+			"id": "99566404856367466",
+			"name": "Anyone's Legend",
+			"code": "AL",
+			"image": "https://static.lolesports.com/teams/1641199582689_.png",
+			"region": "cn"
+		},
+		{
+			"id": "99566405941863385",
+			"name": "LYON",
+			"code": "LYON",
+			"image": "https://static.lolesports.com/teams/1743717443673_isotypelyon-03.png",
+			"region": "na"
+		}
+	],
+	"matches": [
+		{
+			"id": "115660588583171786",
+			"startTime": "2026-10-15T18:00:00Z",
+			"phase": "playin",
+			"teams": ["111692118851466302", "98767991877340524"],
+			"bestOf": 5,
+			"score": [3, 2]
+		},
+		{
+			"id": "115660588583040710",
+			"startTime": "2026-10-15T23:00:00Z",
+			"phase": "playin",
+			"teams": ["107251245690956393", "100205576309502431"],
+			"bestOf": 5,
+			"score": [3, 0]
+		},
+		{
+			"id": "115660588583171790",
+			"startTime": "2026-10-16T18:00:00Z",
+			"phase": "playin",
+			"teams": ["111692118851466302", "107251245690956393"],
+			"bestOf": 5,
+			"score": [3, 0]
+		},
+		{
+			"id": "115660588583171794",
+			"startTime": "2026-10-16T23:00:00Z",
+			"phase": "playin",
+			"teams": ["100205576309502431", "98767991877340524"],
+			"bestOf": 5,
+			"score": [3, 1]
+		},
+		{
+			"id": "115660588583171798",
+			"startTime": "2026-10-17T18:00:00Z",
+			"phase": "playin",
+			"teams": ["107251245690956393", "100205576309502431"],
+			"bestOf": 5,
+			"score": [3, 1]
+		},
+		{
+			"id": "116299649498303884",
+			"startTime": "2026-10-18T18:00:00Z",
+			"phase": "playin",
+			"teams": ["111692118851466302", "107251245690956393"],
+			"bestOf": 5,
+			"score": [3, 0]
+		},
+		{
+			"id": "115660540726095005",
+			"startTime": "2026-10-23T17:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404848691211", "100205573495116443"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095013",
+			"startTime": "2026-10-23T18:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404854685458", "100205573496804586"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095019",
+			"startTime": "2026-10-23T19:00:00Z",
+			"phase": "swiss",
+			"teams": ["103461966965149786", "99566404853854212"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095009",
+			"startTime": "2026-10-23T20:00:00Z",
+			"phase": "swiss",
+			"teams": ["111692118851466302", "99566404856367466"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095011",
+			"startTime": "2026-10-23T21:00:00Z",
+			"phase": "swiss",
+			"teams": ["100725845018863243", "98767991926151025"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095007",
+			"startTime": "2026-10-23T22:00:00Z",
+			"phase": "swiss",
+			"teams": ["98926509885559666", "107700199633958891"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095015",
+			"startTime": "2026-10-23T23:00:00Z",
+			"phase": "swiss",
+			"teams": ["109480204628225868", "98767991853197861"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095017",
+			"startTime": "2026-10-24T00:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566405941863385", "113661839307879869"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095029",
+			"startTime": "2026-10-24T17:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404854685458", "99566404856367466"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095021",
+			"startTime": "2026-10-24T18:00:00Z",
+			"phase": "swiss",
+			"teams": ["103461966965149786", "107700199633958891"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095031",
+			"startTime": "2026-10-24T19:00:00Z",
+			"phase": "swiss",
+			"teams": ["109480204628225868", "98767991926151025"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095023",
+			"startTime": "2026-10-24T20:00:00Z",
+			"phase": "swiss",
+			"teams": ["111692118851466302", "99566405941863385"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095033",
+			"startTime": "2026-10-24T21:00:00Z",
+			"phase": "swiss",
+			"teams": ["113661839307879869", "99566404848691211"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095025",
+			"startTime": "2026-10-24T22:00:00Z",
+			"phase": "swiss",
+			"teams": ["100205573496804586", "100205573495116443"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095027",
+			"startTime": "2026-10-24T23:00:00Z",
+			"phase": "swiss",
+			"teams": ["100725845018863243", "98767991853197861"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095035",
+			"startTime": "2026-10-25T00:00:00Z",
+			"phase": "swiss",
+			"teams": ["98926509885559666", "99566404853854212"],
+			"bestOf": 1,
+			"score": [0, 1]
+		},
+		{
+			"id": "115660540726095045",
+			"startTime": "2026-10-25T17:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404848691211", "100205573496804586"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095047",
+			"startTime": "2026-10-25T18:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404854685458", "98767991926151025"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095037",
+			"startTime": "2026-10-25T19:00:00Z",
+			"phase": "swiss",
+			"teams": ["103461966965149786", "100725845018863243"],
+			"bestOf": 3,
+			"score": [0, 2]
+		},
+		{
+			"id": "115660540726095041",
+			"startTime": "2026-10-25T22:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566405941863385", "100205573495116443"],
+			"bestOf": 3,
+			"score": [1, 2]
+		},
+		{
+			"id": "115660540726095049",
+			"startTime": "2026-10-26T17:00:00Z",
+			"phase": "swiss",
+			"teams": ["98767991853197861", "107700199633958891"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095051",
+			"startTime": "2026-10-26T18:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404853854212", "111692118851466302"],
+			"bestOf": 1,
+			"score": [1, 0]
+		},
+		{
+			"id": "115660540726095053",
+			"startTime": "2026-10-26T19:00:00Z",
+			"phase": "swiss",
+			"teams": ["113661839307879869", "109480204628225868"],
+			"bestOf": 3,
+			"score": [0, 2]
+		},
+		{
+			"id": "115660540726095057",
+			"startTime": "2026-10-26T22:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404856367466", "98926509885559666"],
+			"bestOf": 3,
+			"score": [0, 2]
+		},
+		{
+			"id": "115660540726095061",
+			"startTime": "2026-10-28T20:00:00Z",
+			"phase": "swiss",
+			"teams": ["103461966965149786", "98767991853197861"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095065",
+			"startTime": "2026-10-28T23:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566405941863385", "99566404848691211"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095073",
+			"startTime": "2026-10-29T20:00:00Z",
+			"phase": "swiss",
+			"teams": ["107700199633958891", "111692118851466302"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095069",
+			"startTime": "2026-10-29T23:00:00Z",
+			"phase": "swiss",
+			"teams": ["99566404853854212", "99566404854685458"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095077",
+			"startTime": "2026-10-30T20:00:00Z",
+			"phase": "swiss",
+			"teams": ["98926509885559666", "109480204628225868"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095081",
+			"startTime": "2026-10-30T23:00:00Z",
+			"phase": "swiss",
+			"teams": ["98767991926151025", "100205573496804586"],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095085",
+			"startTime": "2026-10-31T17:00:00Z",
+			"phase": "swiss",
+			"teams": [null, null],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095089",
+			"startTime": "2026-10-31T20:00:00Z",
+			"phase": "swiss",
+			"teams": [null, null],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095093",
+			"startTime": "2026-10-31T23:00:00Z",
+			"phase": "swiss",
+			"teams": [null, null],
+			"bestOf": 3,
+			"score": null
+		},
+		{
+			"id": "115660540726095097",
+			"startTime": "2026-11-03T22:00:00Z",
+			"phase": "quarter",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095103",
+			"startTime": "2026-11-04T22:00:00Z",
+			"phase": "quarter",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095109",
+			"startTime": "2026-11-05T22:00:00Z",
+			"phase": "quarter",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095115",
+			"startTime": "2026-11-06T22:00:00Z",
+			"phase": "quarter",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095121",
+			"startTime": "2026-11-07T22:00:00Z",
+			"phase": "semi",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095127",
+			"startTime": "2026-11-08T22:00:00Z",
+			"phase": "semi",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		},
+		{
+			"id": "115660540726095133",
+			"startTime": "2026-11-14T19:00:00Z",
+			"phase": "final",
+			"teams": [null, null],
+			"bestOf": 5,
+			"score": null
+		}
+	]
+}
