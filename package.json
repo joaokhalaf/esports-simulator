@@ -32,7 +32,12 @@
 		"ci": "biome ci .",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
-		"format:check": "biome format ."
+		"format:check": "biome format .",
+		"build:cloudflare": "pnpm --filter web run build:cloudflare && pnpm --filter server run build:worker",
+		"test:worker": "pnpm --filter server run test:worker",
+		"dev:cloudflare": "pnpm --filter server exec wrangler dev --local --port 3101",
+		"db:migrate:local": "pnpm --filter server exec wrangler d1 migrations apply worlds-local --local",
+		"test:e2e:cloudflare": "playwright test --config playwright.cloudflare.config.ts"
 	},
 	"dependencies": {
 		"zod": "catalog:"

@@ -5,7 +5,7 @@
 	"scripts": {
 		"check-types": "tsc --noEmit",
 		"dev": "alchemy dev",
-		"deploy": "alchemy deploy",
+		"deploy": "pnpm --filter web run build:cloudflare && alchemy deploy",
 		"destroy": "alchemy destroy"
 	},
 	"dependencies": {

@@ -58,3 +58,10 @@ playwright-report/
 .cache
 tmp
 temp
+
+# Cloudflare local state and Worker bundles
+.wrangler
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+dist-worker

@@ -1,0 +1,2 @@
+BETTER_AUTH_SECRET=local-cloudflare-development-only-replace-before-deploy
+ADMIN_USER_IDS=
