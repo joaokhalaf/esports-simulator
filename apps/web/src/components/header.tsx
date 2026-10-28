@@ -1,32 +1,30 @@
 import { Link } from "@tanstack/react-router";
 
-import { ModeToggle } from "./mode-toggle";
-import UserMenu from "./user-menu";
-
 export default function Header() {
-  const links = [
-    { to: "/", label: "Home" },
-    { to: "/dashboard", label: "Dashboard" },
-  ] as const;
-
-  return (
-    <div>
-      <div className="flex flex-row items-center justify-between px-2 py-1">
-        <nav className="flex gap-4 text-lg">
-          {links.map(({ to, label }) => {
-            return (
-              <Link key={to} to={to}>
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <UserMenu />
-        </div>
-      </div>
-      <hr />
-    </div>
-  );
+	return (
+		<header className="sidebar-header">
+			<div className="sidebar-header-inner">
+				<Link className="sidebar-brand" to="/">
+					<svg
+						width="43"
+						height="36"
+						viewBox="0 0 43 36"
+						fill="none"
+						aria-hidden="true"
+					>
+						<path
+							d="M2 3H19V15H31V22H19V34H2M19 9H31V28H19M31 18H41"
+							stroke="currentColor"
+							strokeWidth="1.6"
+						/>
+						<circle cx="10" cy="9" r="2" stroke="currentColor" />
+						<circle cx="10" cy="28" r="2" stroke="currentColor" />
+						<path d="M34 18H41" stroke="#c4fb5c" strokeWidth="2" />
+					</svg>
+					<span>bracket.</span>
+				</Link>
+				<span className="sidebar-brand-description">Tournament simulator</span>
+			</div>
+		</header>
+	);
 }

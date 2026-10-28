@@ -1,5 +1,7 @@
 # esports-simulator
 
+MVP do simulador do **Worlds 2026**, com importação direta do LoL Esports sem token, Play-In, suíço, eliminatórias, cenários locais e sorteios reproduzíveis. Consulte [execução, regras, administração e testes](docs/mvp.md).
+
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, ORPC, and more.
 
 ## Features
@@ -86,6 +88,8 @@ Bun's automatic env loading is disabled in `bunfig.toml`; the framework integrat
 Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
 
 ## Deployment
+
+A pipeline GitHub Actions valida PRs, publica homologação por `master` e produção por tags `vX.Y.Z`. Consulte [configuração, escopo e recuperação do CI/CD](docs/ci-cd.md).
 
 ### Alchemy
 
