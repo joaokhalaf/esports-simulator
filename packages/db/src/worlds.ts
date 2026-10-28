@@ -1,8 +1,16 @@
 import { desc, eq, isNotNull } from "drizzle-orm";
+import type { D1Store } from "./d1/index";
+import * as d1 from "./d1/worlds";
 import type { Database } from "./index";
 import { worldsScenario, worldsSnapshot } from "./schema/worlds";
 
-export async function latestSnapshot(db: Database) {
+export type WorldsDatabase = Database | D1Store;
+function isD1(db: WorldsDatabase): db is D1Store {
+	return "dialect" in db && db.dialect === "d1";
+}
+
+export async function latestSnapshot(db: WorldsDatabase) {
+	if (isD1(db)) return d1.latestSnapshot(db);
 	return (
 		await db
 			.select()
@@ -12,7 +20,8 @@ export async function latestSnapshot(db: Database) {
 			.limit(1)
 	)[0];
 }
-export async function findSnapshot(db: Database, id: string) {
+export async function findSnapshot(db: WorldsDatabase, id: string) {
+	if (isD1(db)) return d1.findSnapshot(db, id);
 	return (
 		await db
 			.select()
@@ -22,10 +31,11 @@ export async function findSnapshot(db: Database, id: string) {
 	)[0];
 }
 export async function publishSnapshot(
-	db: Database,
+	db: WorldsDatabase,
 	snapshot: { id: string },
 	payload: unknown,
 ) {
+	if (isD1(db)) return d1.publishSnapshot(db, snapshot, payload);
 	await db
 		.insert(worldsSnapshot)
 		.values({ id: snapshot.id, payload, publishedAt: new Date() })
@@ -35,11 +45,12 @@ export async function publishSnapshot(
 		});
 }
 export async function saveScenario(
-	db: Database,
+	db: WorldsDatabase,
 	snapshot: { id: string },
 	payload: unknown,
 	scenario: { id: string; ownerId: string; name: string; payload: unknown },
 ) {
+	if (isD1(db)) return d1.saveScenario(db, snapshot, payload, scenario);
 	await db.transaction(async (tx) => {
 		await tx
 			.insert(worldsSnapshot)
@@ -50,7 +61,8 @@ export async function saveScenario(
 			.values({ ...scenario, snapshotId: snapshot.id });
 	});
 }
-export async function listScenarios(db: Database, ownerId: string) {
+export async function listScenarios(db: WorldsDatabase, ownerId: string) {
+	if (isD1(db)) return d1.listScenarios(db, ownerId);
 	return db
 		.select({
 			id: worldsScenario.id,
@@ -62,7 +74,8 @@ export async function listScenarios(db: Database, ownerId: string) {
 		.orderBy(desc(worldsScenario.createdAt))
 		.limit(50);
 }
-export async function findScenario(db: Database, id: string) {
+export async function findScenario(db: WorldsDatabase, id: string) {
+	if (isD1(db)) return d1.findScenario(db, id);
 	return (
 		await db
 			.select({

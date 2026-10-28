@@ -1,8 +1,8 @@
 import type { Session } from "@esports-simulator/auth";
-import type { Database } from "@esports-simulator/db";
+import type { WorldsDatabase } from "@esports-simulator/db/worlds";
 
 export type Context = {
 	session: Session | null;
-	db: Database;
+	db: WorldsDatabase;
 	isAdmin: boolean;
 };

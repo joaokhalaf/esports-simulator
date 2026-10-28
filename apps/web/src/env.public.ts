@@ -2,5 +2,6 @@
 import type { PublicCoercedEnvSchema } from "./env";
 
 export const ENV = {
-	VITE_SERVER_URL: import.meta.env.VITE_SERVER_URL!,
+	VITE_SERVER_URL:
+		import.meta.env.VITE_SERVER_URL?.trim() || window.location.origin,
 } satisfies Pick<PublicCoercedEnvSchema, "VITE_SERVER_URL">;

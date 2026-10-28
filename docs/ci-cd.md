@@ -1,60 +1,26 @@
 # CI/CD e entrega
 
-## Fluxo
+## Validação de PRs
 
-- Cada PR executa `.github/workflows/ci.yml`: instalação com lockfile congelado, Biome sem escrita, migração em PostgreSQL 17 descartável, testes de domínio/adaptador/persistência, tipos, build e Playwright Chromium. Não usa credenciais de produção.
-- O CD executa a mesma CI antes de publicar. Push em `master` publica o frontend no stage `homologation`; tag estrita `vMAJOR.MINOR.PATCH` publica `production`. O commit da tag precisa pertencer ao histórico de `master`. `workflow_dispatch` permite repetir a entrega da branch principal ou de uma tag válida.
-- Deploys do mesmo ambiente são serializados. Falhas anteriores bloqueiam o deploy. Relatórios, traces, capturas de tela e builds ficam nos artefatos da execução por sete dias.
-- PRs encadeados devem entrar pela ordem de dependência. Após integrar um PR, altere a base do próximo para `master` e confira o diff antes de integrar.
+`.github/workflows/ci.yml` instala as dependências com lockfile congelado e executa Biome, testes de domínio/adaptador, tipos e build. PostgreSQL temporário valida a compatibilidade do caminho Node.js existente. O Worker é compilado com Wrangler em dry-run e testado com D1 efêmero no Miniflare, sem credenciais de nuvem.
 
-## Configuração do GitHub
+Playwright verifica o simulador tanto no servidor Node.js quanto no Worker com assets na mesma origem. Relatórios, traces, capturas e builds ficam nos artefatos da execução por sete dias.
 
-Crie os environments `homologation` e `production` em Settings → Environments. Em cada um, configure:
+## Publicação
 
-| Tipo            | Nome                    | Conteúdo                                                                               |
-| --------------- | ----------------------- | -------------------------------------------------------------------------------------- |
-| Variable        | `VITE_SERVER_URL`       | URL HTTPS pública da API Node.js daquele ambiente                                      |
-| Variable        | `CLOUDFLARE_ACCOUNT_ID` | Identificador da conta Cloudflare                                                      |
-| Secret          | `CLOUDFLARE_API_TOKEN`  | Token com permissões para os recursos Workers e o estado gerenciado pelo stack Alchemy |
-| Secret opcional | `ALCHEMY_PASSWORD`      | Senha de criptografia, caso o estado existente a utilize; preserve a mesma senha       |
+O workflow `CD` executa a CI antes do deploy. Push em `master` publica `homologation`; tag estrita `vMAJOR.MINOR.PATCH` de um commit pertencente ao histórico de `master` publica `production`. Deploys do mesmo ambiente são serializados. `workflow_dispatch` permite repetir uma publicação válida.
 
-Use as permissões documentadas no [guia oficial de CI do Alchemy](https://alchemy.run/environments/ci/) para o stack Cloudflare. O Alchemy v2 resolve credenciais diretamente do ambiente em CI; não depende de um perfil pessoal no runner. A pipeline usa a versão Alchemy fixada no projeto e os stages explícitos, evitando stages pessoais.
+A publicação cria ou atualiza um Worker que serve interface e API, e um banco D1 por stage. As migrações D1 versionadas são aplicadas pelo Alchemy antes de publicar o Worker. A configuração não depende de uma API externa, PostgreSQL remoto ou variável `VITE_SERVER_URL`.
 
-Configure proteção de `master` para exigir o check de qualidade e revisão. Se quiser aprovação manual para produção, configure required reviewers no environment `production`. As regras da conta podem restringir esses recursos. A pipeline versionada não cria essas políticas nem credenciais automaticamente.
+Veja [configuração dos environments, deploy manual, migrações e recuperação](cloudflare.md). Proteção da branch e revisão obrigatória podem ser configuradas nas opções do GitHub; o workflow não modifica essas políticas.
 
-O primeiro deploy só funciona depois de cadastrar as variáveis/credenciais e disponibilizar a API. Nenhum segredo é necessário para executar a CI de PRs.
+## Release
 
-## Escopo da publicação
-
-O stack existente em `packages/infra/alchemy.run.ts` publica somente o frontend Vite no Cloudflare. A API Hono é um processo Node.js externo e o PostgreSQL é externo. Configure a API com `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CORS_ORIGIN`, `PORT` e, quando necessário, `ADMIN_USER_IDS`. `CORS_ORIGIN` deve corresponder à URL do frontend do ambiente. A pipeline gera artefatos dos builds da API e web; ela não provisiona hospedagem da API.
-
-Migrações remotas não são executadas pelo CD. A migração inicial pressupõe banco novo; um banco que já recebeu `db:push` precisa de baseline revisada. Para um banco novo autorizado, execute com a URL apropriada:
-
-```sh
-pnpm --filter @esports-simulator/db run db:migrate
-```
-
-Os testes locais e a CI aplicam essa migração apenas em `worlds_mvp`, isolado, e verificam também a reaplicação sem novas alterações.
-
-## Release e recuperação
-
-Depois de integrar os PRs e validar homologação, marque o commit de `master` aprovado:
+Depois de integrar as alterações em `master` e validar homologação, marque o commit aprovado com uma tag ainda não publicada:
 
 ```sh
 git tag v0.1.0 <commit-aprovado>
 git push origin v0.1.0
 ```
 
-Para recuperar uma versão de frontend, execute novamente o CD de uma tag válida anterior pelo Actions. Preserve as tags já publicadas. Se a API ou o schema mudar, confirme a compatibilidade antes de recuperar uma versão. O rollback do frontend não remove tabelas nem reverte migrações.
-
-## Comandos locais
-
-```sh
-pnpm install --frozen-lockfile
-pnpm run ci
-pnpm test
-pnpm run check-types
-pnpm run build
-```
-
-Para persistência e navegador, siga o PostgreSQL temporário em [mvp.md](mvp.md). `pnpm run check` verifica sem alterar arquivos; `pnpm run check:fix` aplica correções seguras. Os avisos atuais de especificidade CSS permanecem visíveis e não bloqueiam o check.
+Mantenha tags existentes. Antes de republicar uma revisão anterior, confirme que o código é compatível com o schema D1 atual. Recuperar código não reverte migrações.

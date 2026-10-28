@@ -1,24 +1,37 @@
 import type { Context as ApiContext } from "@esports-simulator/api/context";
 import type { Context as HonoContext } from "hono";
-import { ENV } from "./env.server";
-import { auth, db } from "./services";
+export type ApiServices = {
+	db: ApiContext["db"];
+	auth: {
+		handler: (request: Request) => Promise<Response>;
+		api: {
+			getSession: (input: {
+				headers: Headers;
+			}) => Promise<ApiContext["session"]>;
+		};
+	};
+};
 
 export type CreateContextOptions = {
 	context: HonoContext;
+	services: ApiServices;
+	adminUserIds?: string;
 };
 
 export async function createContext({
 	context,
+	services,
+	adminUserIds,
 }: CreateContextOptions): Promise<ApiContext> {
-	const session = await auth.api.getSession({
+	const session = await services.auth.api.getSession({
 		headers: context.req.raw.headers,
 	});
 	return {
-		db,
+		db: services.db,
 		session,
 		isAdmin:
 			!!session?.user &&
-			(ENV.ADMIN_USER_IDS ?? "")
+			(adminUserIds ?? "")
 				.split(",")
 				.map((id) => id.trim())
 				.filter(Boolean)

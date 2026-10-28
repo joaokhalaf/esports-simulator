@@ -6,27 +6,36 @@ import "varlock/auto-load";
 
 export default Alchemy.Stack(
 	"esports-simulator",
-	{
-		providers: Cloudflare.providers(),
-		state: Cloudflare.state(),
-	},
+	{ providers: Cloudflare.providers(), state: Cloudflare.state() },
 	Effect.gen(function* () {
-		const webWorker = yield* Cloudflare.Website.Vite("web", {
-			rootDir: "../../apps/web",
+		const database = yield* Cloudflare.D1.Database("worlds", {
+			migrations: "../../packages/db/src/d1/migrations",
+		});
+		const web = yield* Cloudflare.Worker("web", {
+			main: "../../apps/server/src/worker.ts",
+			compatibility: { date: "2026-10-27", flags: ["nodejs_compat"] },
 			assets: {
+				directory: "../../apps/web/dist",
 				htmlHandling: "auto-trailing-slash",
 				notFoundHandling: "single-page-application",
+				runWorkerFirst: [
+					"/rpc",
+					"/rpc/*",
+					"/api/*",
+					"/api-reference",
+					"/api-reference/*",
+					"/health",
+				],
 			},
 			env: {
-				VITE_SERVER_URL: Config.String("VITE_SERVER_URL"),
-			},
-			dev: {
-				port: 3001,
+				DB: database,
+				PUBLIC_URL: Cloudflare.Worker.URL,
+				BETTER_AUTH_SECRET: Config.Redacted("BETTER_AUTH_SECRET"),
+				ADMIN_USER_IDS: Config.String("ADMIN_USER_IDS").pipe(
+					Config.withDefault(""),
+				),
 			},
 		});
-
-		return {
-			web: webWorker.url,
-		};
+		return { web: web.url, database: database.databaseName };
 	}),
 );
