@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Quality, integration and browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: worlds_mvp
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d worlds_mvp"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      CI: "true"
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:password@localhost:55432/worlds_mvp
+      TEST_DATABASE_URL: postgresql://postgres:password@localhost:55432/worlds_mvp
+      BETTER_AUTH_SECRET: ci-only-test-secret-never-use-in-production-123456789
+      BETTER_AUTH_URL: http://localhost:3100
+      CORS_ORIGIN: http://localhost:3101
+      VITE_SERVER_URL: http://localhost:3100
+      ADMIN_USER_IDS: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install dependencies and generate env types
+        run: pnpm install --frozen-lockfile
+      - name: Biome
+        run: pnpm run ci
+      - name: Apply migrations to isolated database
+        run: pnpm --filter @esports-simulator/db run db:migrate
+      - name: Domain, adapter and persistence tests
+        run: pnpm test
+      - name: Type check
+        run: pnpm run check-types
+      - name: Build
+        run: pnpm run build
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser tests
+        run: pnpm run test:e2e
+      - name: Upload browser report and screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Upload application builds
+        uses: actions/upload-artifact@v4
+        with:
+          name: builds-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            apps/web/dist/
+            apps/server/dist/
+          retention-days: 7
