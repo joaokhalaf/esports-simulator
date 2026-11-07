@@ -40,6 +40,30 @@ export function validateRealProgression(snapshot: Snapshot) {
 }
 const pairKey = (a: string, b: string) => [a, b].sort().join(":");
 
+// Applying official results leaves compatible predictions in place. Simulated
+// draws must yield to the imported bracket so they cannot hide real results.
+export function updateResults(
+	snapshot: Snapshot,
+	scenario: Scenario,
+): Scenario {
+	const updated: Scenario = {
+		...scenario,
+		mode: "current",
+		drawSeeds: undefined,
+	};
+	const matches = simulate(snapshot, updated).matches;
+	return {
+		...updated,
+		picks: Object.fromEntries(
+			Object.entries(updated.picks).filter(([id]) =>
+				matches.some(
+					(match) => match.id === id && match.origin === "simulated",
+				),
+			),
+		),
+	};
+}
+
 function random(seed: number) {
 	let state = seed >>> 0;
 	return () => {

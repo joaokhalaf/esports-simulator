@@ -6,6 +6,7 @@ import {
 	redrawRound,
 	setPick,
 	simulate,
+	updateResults,
 	validateRealProgression,
 } from "../src/worlds/engine";
 import {
@@ -53,6 +54,45 @@ function finish(initial: Scenario) {
 	}
 	throw new Error("Simulation failed to finish");
 }
+
+test("updating results restores official scores from beginning mode and custom draws", () => {
+	const previous = finish(scenario()).state;
+	previous.drawSeeds = { "swiss-1": 456, quarter: 789 };
+	const updated = updateResults(snapshot, previous);
+	assert.equal(updated.mode, "current");
+	assert.equal(updated.seed, previous.seed);
+	assert.equal(updated.drawSeeds, undefined);
+	const result = simulate(snapshot, updated);
+	for (const match of snapshot.matches.filter((m) => m.score)) {
+		const actual = result.matches.find((m) => m.id === match.id);
+		assert.equal(actual?.origin, "real");
+		assert.deepEqual(actual?.score, match.score);
+	}
+	assert.ok(Object.keys(previous.picks).length > 0);
+});
+
+test("updating results keeps compatible future picks and replaces newly completed scores", () => {
+	const initial = scenario(1, "current");
+	const match = simulate(snapshot, initial).matches.find(
+		(m) => !m.score && m.teams.every(Boolean),
+	);
+	assert.ok(match);
+	const score: Score = [Math.ceil(match.bestOf / 2), 0];
+	const picked = setPick(snapshot, initial, match.id, score);
+	assert.deepEqual(updateResults(snapshot, picked).picks, picked.picks);
+	const imported = structuredClone(snapshot);
+	const official = imported.matches.find((m) => m.id === match.id);
+	assert.ok(official);
+	official.score = [0, Math.ceil(match.bestOf / 2)];
+	const updated = updateResults(imported, picked);
+	assert.equal(updated.picks[match.id], undefined);
+	const real = simulate(imported, updated).matches.find(
+		(m) => m.id === match.id,
+	);
+	assert.equal(real?.origin, "real");
+	assert.deepEqual(real?.score, official.score);
+	assert.deepEqual(picked.picks[match.id]?.score, score);
+});
 
 test("MD1, MD3 and MD5 reject ties, unfinished scores and impossible totals", () => {
 	for (const bestOf of [1, 3, 5]) {

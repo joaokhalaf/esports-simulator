@@ -15,6 +15,72 @@ async function swiss(page: Page) {
 	await page.getByRole("button", { name: "Fase suíça", exact: true }).click();
 }
 
+test("import applies real results to a beginning scenario and can undo the entire update", async ({
+	page,
+}) => {
+	await page.route("**/rpc/worlds/latest", (route) =>
+		route.fulfill({
+			json: {
+				json: { snapshot: seed, storageAvailable: true, isAdmin: false },
+			},
+		}),
+	);
+	const imported = { ...seed, id: "updated-results-test" };
+	await page.route("**/rpc/worlds/live", (route) =>
+		route.fulfill({ json: { json: imported } }),
+	);
+	await page.goto("/");
+	await page
+		.locator(".simulation-controls")
+		.getByRole("button", { name: "Do início", exact: true })
+		.click();
+	await pickFirstReady(page);
+	const before = await page.evaluate(() =>
+		localStorage.getItem("worlds-2026-draft-v1"),
+	);
+	const refresh = page
+		.locator(".source-line")
+		.getByRole("button", { name: "Atualizar resultados reais" });
+	await refresh.click();
+	await expect(
+		page.getByText("Resultados reais aplicados ao cenário.", { exact: true }),
+	).toBeVisible();
+	await expect
+		.poll(async () =>
+			page.evaluate(() => {
+				const draft = JSON.parse(
+					localStorage.getItem("worlds-2026-draft-v1") ?? "{}",
+				);
+				return { id: draft.snapshot?.id, mode: draft.scenario?.mode };
+			}),
+		)
+		.toEqual({ id: imported.id, mode: "current" });
+	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await expect
+		.poll(() =>
+			page.evaluate(() => localStorage.getItem("worlds-2026-draft-v1")),
+		)
+		.toBe(before);
+	await expect(page.locator(".is-simulated")).toHaveCount(1);
+	await refresh.click();
+	await page.reload();
+	await expect
+		.poll(async () =>
+			page.evaluate(
+				() =>
+					JSON.parse(localStorage.getItem("worlds-2026-draft-v1") ?? "{}")
+						.scenario?.mode,
+			),
+		)
+		.toBe("current");
+	await swiss(page);
+	await page.getByRole("tab", { name: /^Rodada 1/ }).click();
+	await expect(page.locator(".match-card .team-choice").first()).toBeDisabled();
+	await expect(page.locator(".match-card .match-score").first()).toHaveText(
+		/^[01]$/,
+	);
+});
+
 test("visitor selects scores, restores a draft and restarts from the beginning", async ({
 	page,
 }) => {
