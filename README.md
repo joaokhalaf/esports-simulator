@@ -1,143 +1,42 @@
-# esports-simulator
+# bracket.
 
-MVP do simulador do **Worlds 2026**, com importação direta do LoL Esports sem token, Play-In, suíço, eliminatórias, cenários locais e sorteios reproduzíveis. Consulte [execução, regras, administração e testes](docs/mvp.md).
+**Seu caminho até o campeão do Worlds 2026.**
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, ORPC, and more.
+Simule o Mundial de League of Legends: escolha os vencedores, defina os placares e acompanhe como cada resultado muda os próximos confrontos, do Play-In à grande final.
 
-## Features
+## O que você pode fazer
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Hono** - Lightweight, performant server framework
-- **oRPC** - End-to-end type-safe APIs with OpenAPI integration
-- **Node.js** - Runtime environment
-- **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
-- **Authentication** - Better-Auth
-- **Turborepo** - Optimized monorepo build system
-- **Biome** - Linting and formatting
+- **Começar da situação atual ou do zero.** Continue a partir dos resultados reais ou faça seus palpites desde a primeira partida.
+- **Simular todas as fases.** Acompanhe Play-In, fase suíça, classificação e playoffs em uma chave interativa.
+- **Explorar outros caminhos.** Refaça sorteios das rodadas disponíveis ou simule automaticamente as partidas restantes.
+- **Rever suas escolhas.** Altere placares, desfaça ações e reinicie a simulação com confirmação.
+- **Voltar depois.** Seus palpites ficam salvos automaticamente no navegador.
+- **Usar no computador ou celular.** Navegue por rodadas ou veja a chave completa em telas maiores.
 
-## Getting Started
+## Como funciona
 
-First, install the dependencies:
+1. Escolha **Situação atual** ou **Do início**.
+2. Selecione uma equipe no confronto, escolha o placar e clique em **Confirmar**.
+3. Complete a rodada para definir os próximos confrontos e siga até o campeão.
 
-```bash
-pnpm install
-```
+Na fase suíça, três vitórias classificam e três derrotas eliminam. A classificação acompanha cada resultado confirmado. Ao alterar um palpite, os palpites posteriores que dependem dele são descartados e os confrontos são atualizados.
 
-## Database Setup
+Você também pode usar **Simular restantes** para completar a chave ou **Refazer sorteio** para explorar outra combinação válida de adversários.
 
-This project uses PostgreSQL with Drizzle ORM.
+## Dados e palpites
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/server/.env` file with your PostgreSQL connection details.
+A opção **Importar da Riot** busca uma atualização dos dados do LoL Esports. Você escolhe quando adotar a nova versão em um cenário atualizado, preservando os palpites do cenário aberto.
 
-3. Apply the schema to your database:
+A simulação pode usar a versão de dados incluída no projeto quando a importação estiver indisponível. A data dos dados aparece na interface.
 
-```bash
-pnpm run db:push
-```
+O uso dispensa cadastro. Os palpites ficam neste navegador e não são sincronizados entre dispositivos; limpar os dados do site pode apagá-los.
 
-Then, run the development server:
+## Sobre o projeto
 
-```bash
-pnpm run dev
-```
+O escopo atual é o **Worlds 2026 de League of Legends**. Outros campeonatos e jogos ainda não estão disponíveis. Os resultados simulados representam suas escolhas e não alteram os resultados oficiais.
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
+A aplicação usa React e TypeScript na interface, com API em Node.js e PostgreSQL para persistência dos dados do campeonato.
 
-## UI Customization
+## Para desenvolver
 
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
-```
-
-Import shared components like this:
-
-```tsx
-import { Button } from "@esports-simulator/ui/components/button";
-```
-
-### Add app-specific blocks
-
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
-
-## Environment Configuration
-
-Each app owns its environment schema in `.env.schema`. Varlock generates `src/env.ts` during installation; run `pnpm run env:generate` after changing a schema. Commit schemas, and keep secrets in ignored env files or your deployment platform.
-
-Import the generated `ENV` accessor in application code. Shared database and auth packages receive configuration or initialized clients from the application. See [Varlock's monorepo guide](https://varlock.dev/guides/monorepos/).
-
-For Cloudflare, Alchemy loads and validates deployment inputs with `varlock/auto-load` in its Node/Bun deployment process. Worker code reads native bindings; web clients use the framework's public env API through `src/env.public.ts` where needed. Alchemy supplies resource URLs and managed database credentials. In-Worker Varlock protections are deferred until an official Alchemy integration is available; see [the non-Wrangler deployment guidance](https://varlock.dev/integrations/cloudflare/#non-wrangler-deploy-tools-alchemy-sst-pulumi).
-
-Bun's automatic env loading is disabled in `bunfig.toml`; the framework integration or server bootstrap loads Varlock. Node deployments must include Varlock and its dependencies alongside the app schema.
-
-Run standalone Node/Bun tools that use Varlock from the owning app directory so they load that app's schema and env files. `env:generate` only generates TypeScript files; it does not initialize environment values in a subsequent command.
-
-## Deployment
-
-A pipeline GitHub Actions valida PRs, publica homologação por `master` e produção por tags `vX.Y.Z`. Consulte [configuração, escopo e recuperação do CI/CD](docs/ci-cd.md).
-
-### Alchemy
-
-- Target: web on Cloudflare
-- Configure provider accounts: `cd packages/infra && pnpm exec alchemy profile edit`
-- Dev: pnpm run dev
-- Deploy: pnpm run deploy
-- Destroy: pnpm run destroy
-
-`alchemy profile edit` stores the selected Axiom, Cloudflare, Neon, PlanetScale, and/or Prisma provider profiles under `~/.alchemy`; no provider-specific setup command is required by this scaffold.
-
-Deploys are staged and default to a personal `dev_<username>` stage. For production, run the deploy with an explicit stage from `packages/infra`:
-
-```bash
-cd packages/infra && pnpm exec alchemy deploy --stage production
-```
-
-## Git Hooks and Formatting
-
-- Run checks: `pnpm run check`
-
-## Project Structure
-
-```
-esports-simulator/
-├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Hono, ORPC)
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
-```
-
-## Available Scripts
-
-- `pnpm run dev`: Start all applications in development mode
-- `pnpm run build`: Build all applications
-- `pnpm run dev:web`: Start only the web application
-- `pnpm run dev:server`: Start only the server
-- `pnpm run check-types`: Check TypeScript types across all apps
-- `pnpm run db:push`: Push schema changes to database
-- `pnpm run db:generate`: Generate database client/types
-- `pnpm run db:migrate`: Run database migrations
-- `pnpm run db:studio`: Open database studio UI
-- `pnpm run check`: Run Biome formatting and linting
-
-## Better Auth Schema Generation
-
-After changing auth plugins or schema options, run `pnpm run auth:generate` from the project root. The script runs the Better Auth CLI through `varlock run` from the owning app directory, loading the auth instance from `src/services.ts`. Review the schema changes, then use your ORM's migration workflow to apply them.
+Veja o [guia de execução local, regras e testes](docs/mvp.md) e a [documentação de CI/CD](docs/ci-cd.md).
