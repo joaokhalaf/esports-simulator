@@ -1,4 +1,4 @@
 {
-  "extends": "@esports-simulator/config/tsconfig.base.json",
-  "include": ["alchemy.run.ts"]
+	"extends": "@esports-simulator/config/tsconfig.base.json",
+	"include": ["alchemy.run.ts"]
 }

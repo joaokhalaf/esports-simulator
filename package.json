@@ -27,7 +27,12 @@
 		"env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
 		"postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
 		"auth:generate": "cd apps/server && pnpm run auth:generate",
-		"check": "biome check --write ."
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
+		"ci": "biome ci .",
+		"lint": "biome lint .",
+		"format": "biome format --write .",
+		"format:check": "biome format ."
 	},
 	"dependencies": {
 		"zod": "catalog:"
