@@ -4,6 +4,8 @@ O simulador importa o Mundial de LoL 2026 diretamente da API usada pelo site LoL
 
 ## Executar localmente
 
+Para rodar frontend, API e D1 no runtime da Cloudflare, siga [o guia Cloudflare](cloudflare.md). Os comandos abaixo mantêm a alternativa Node.js/PostgreSQL.
+
 ```sh
 pnpm install
 cp apps/server/.env.example apps/server/.env
@@ -48,7 +50,8 @@ O segredo do exemplo é exclusivo para desenvolvimento local. Configure um segre
 
 - `packages/api/src/worlds/riot.ts`: adaptador GraphQL `https://lolesports.com/api/gql`, operação `homeEvents`, liga `98767975604431411`, campeonato `115660540725177488`. Usa cabeçalhos públicos de identificação do cliente e filtro do ano de 2026. Não executa JavaScript remoto. Se o identificador da operação mudar, lê o manifesto público do site. Requisições simultâneas são deduplicadas, com cache de cinco minutos, timeout e espera de 30 segundos após falha. Importações incompletas ou de outra edição são recusadas.
 - `model.ts` e `engine.ts`: contratos Zod e motor determinístico sem acesso à rede ou banco. A versão das regras é `worlds-2026-v1`. IDs externos são strings para preservar precisão. Dados reais e resultados simulados ocupam estruturas distintas.
-- `worlds_snapshot`: dados normalizados em JSONB, identificados por SHA-256 do conteúdo, com data de importação e publicação. `worlds_scenario`: proprietário, nome, snapshot e escolhas com versão das regras/semente. O salvamento usa transação e valida os confrontos novamente no servidor. O conteúdo de snapshots e cenários salvos não é atualizado.
+- `worlds_snapshot`: dados normalizados em JSONB, identificados por SHA-256 do conteúdo, com data de importação e publicação. `worlds_scenario`: proprietário, nome, snapshot e escolhas com versão das regras/semente. O salvamento usa transação no PostgreSQL ou lote atômico no D1 e valida os confrontos novamente no servidor. O conteúdo de snapshots e cenários salvos não é atualizado.
+- `apps/server/src/worker.ts`: entrada Cloudflare com assets e API na mesma origem. `packages/db/src/d1` contém o acesso D1, schema de autenticação e migrações SQLite.
 - `apps/web/src/components/worlds-simulator.tsx`: simulação, classificação por rodada, salvamento automático local e importação.
 
 A API do site não oferece aqui um contrato público de integração nem garantia de estabilidade para terceiros. Uma mudança de schema, cobertura ou manifesto pode exigir atualizar o adaptador. A tela conserva a versão anterior quando o import falha. O fallback permite simular e persistir os palpites no navegador mesmo sem PostgreSQL. A infraestrutura de autenticação e as rotas antigas de cenários permanecem no servidor para uso futuro, sem acesso na interface atual. Não há agendamento de sincronização ou suporte a Valorant neste MVP.

@@ -61,10 +61,16 @@ jobs:
         run: pnpm run check-types
       - name: Build
         run: pnpm run build
+      - name: Build Cloudflare application
+        run: pnpm run build:cloudflare
+      - name: Worker and D1 integration tests
+        run: pnpm run test:worker
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
       - name: Browser tests
         run: pnpm run test:e2e
+      - name: Cloudflare browser tests
+        run: pnpm run test:e2e:cloudflare
       - name: Upload browser report and screenshots
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -82,4 +88,5 @@ jobs:
           path: |
             apps/web/dist/
             apps/server/dist/
+            apps/server/dist-worker/
           retention-days: 7
