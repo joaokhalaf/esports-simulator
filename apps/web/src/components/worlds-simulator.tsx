@@ -4,6 +4,7 @@ import {
 	type SimMatch,
 	setPick,
 	simulate,
+	updateResults,
 } from "@esports-simulator/api/worlds/engine";
 import {
 	type DrawKey,
@@ -120,7 +121,7 @@ function Editor({
 		[resetToastId],
 	);
 	const [phase, setPhase] = useState<Phase>("knockout");
-	const [history, setHistory] = useState<Scenario[]>([]);
+	const [history, setHistory] = useState<Draft[]>([]);
 	const [busy, setBusy] = useState(false);
 	const [candidate, setCandidate] = useState<Snapshot | null>(null);
 	const [localError, setLocalError] = useState(false);
@@ -174,16 +175,25 @@ function Editor({
 		setPhase(mode === "current" ? "swiss" : "playin");
 		setCandidate(null);
 	}
+	function applyResults(imported: Snapshot) {
+		const previous = {
+			snapshot: currentSnapshot.current,
+			scenario: currentScenario.current,
+		};
+		setHistory((items) => [...items, previous]);
+		setSnapshot(imported);
+		setScenario(updateResults(imported, previous.scenario));
+		setCandidate(imported);
+		toast.success("Resultados reais aplicados ao cenário.", {
+			description:
+				"Palpites compatíveis preservados. Você pode desfazer a atualização.",
+		});
+	}
 	async function refresh() {
 		setBusy(true);
 		try {
 			const imported = await client.worlds.live();
-			setCandidate(imported);
-			toast.success(
-				imported.id === snapshot.id
-					? "Você já está usando esta versão dos dados."
-					: "Dados importados. Crie um cenário com a nova versão quando quiser.",
-			);
+			applyResults(imported);
 		} catch (error) {
 			toast.error(
 				error instanceof Error ? error.message : "Falha ao importar dados.",
@@ -196,7 +206,7 @@ function Editor({
 		const current = currentScenario.current;
 		const updated = setPick(snapshot, current, match.id, score);
 		if (updated === current) return;
-		setHistory((items) => [...items, current]);
+		setHistory((items) => [...items, { snapshot, scenario: current }]);
 		setScenario(updated);
 		if (!score) return;
 		const progression = simulate(snapshot, updated);
@@ -229,7 +239,10 @@ function Editor({
 			);
 			return;
 		}
-		setHistory((items) => [...items, current]);
+		setHistory((items) => [
+			...items,
+			{ snapshot: currentSnapshot.current, scenario: current },
+		]);
 		setScenario(updated);
 		setPhase(key === "quarter" ? "knockout" : "swiss");
 		toast.success(`Novo sorteio: ${label}.`, {
@@ -303,7 +316,10 @@ function Editor({
 				onClick: () => {
 					const current = currentScenario.current;
 					if (!Object.keys(current.picks).length) return;
-					setHistory((items) => [...items, current]);
+					setHistory((items) => [
+						...items,
+						{ snapshot: currentSnapshot.current, scenario: current },
+					]);
 					setScenario({ ...current, picks: {} });
 					toast.success("Simulação reiniciada.");
 				},
@@ -319,7 +335,8 @@ function Editor({
 	function undo() {
 		const previous = history.at(-1);
 		if (!previous) return;
-		setScenario(previous);
+		setSnapshot(previous.snapshot);
+		setScenario(previous.scenario);
 		setHistory((items) => items.slice(0, -1));
 	}
 	function simulateRest(beforePlayoffs = false) {
@@ -345,7 +362,7 @@ function Editor({
 				random % 2 ? [target, losing] : [losing, target],
 			);
 		}
-		setHistory((items) => [...items, scenario]);
+		setHistory((items) => [...items, { snapshot, scenario }]);
 		setScenario(updated);
 	}
 	return (
@@ -449,7 +466,7 @@ function Editor({
 							<div>
 								<button type="button" disabled={busy} onClick={refresh}>
 									<ArrowDownToLine size={15} />
-									Importar da Riot
+									Atualizar resultados reais
 								</button>
 							</div>
 						</details>
@@ -464,8 +481,8 @@ function Editor({
 				{available.id !== snapshot.id && (
 					<div className="notice">
 						Há uma nova versão dos dados.{" "}
-						<button type="button" onClick={() => start("current", available)}>
-							Criar cenário atualizado <ChevronRight size={14} />
+						<button type="button" onClick={() => applyResults(available)}>
+							Aplicar resultados reais <ChevronRight size={14} />
 						</button>
 					</div>
 				)}
@@ -660,7 +677,7 @@ function Editor({
 						) : (
 							<ArrowDownToLine size={13} />
 						)}
-						Importar da Riot
+						Atualizar resultados reais
 					</button>
 				</div>
 				<footer className="worlds-footer">
