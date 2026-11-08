@@ -4,12 +4,12 @@ Pesquisa de 7 de novembro de 2026. A agenda em `/calendario` diferencia datas de
 
 ## Formatos para validar com edições concluídas
 
-| Torneio | Referência de 2026 | O que implementar |
-| --- | --- | --- |
-| First Stand | Oito equipes em dois grupos de dupla eliminação, seguidos por semifinais e final. Séries MD5. [Regulamento e guia](https://lolesports.com/en-GB/news/fst-2026-primer) | Encadear vencedores e perdedores nos grupos e cruzar os classificados nas semifinais. |
-| MSI | Play-in e chave principal com repescagem. [Agenda e formato](https://lolesports.com/en-US/news/msi-and-worlds-updates) | Permitir entradas diretas, encaminhar derrotados à chave inferior e avançar os classificados do play-in. |
-| EWC | Quatro grupos GSL com 16 equipes, oito classificados, mata-mata e disputa de terceiro lugar. MD1, MD3 e MD5. [Regulamento](https://resources.esportsworldcup.com/en/competitive-ops/rulebooks/lol) | Reaproveitar a progressão de grupos, parametrizar o tamanho das séries e validar o sorteio dos playoffs. |
-| Worlds | Play-in, suíço e mata-mata. [Guia de 2026](https://lolesports.com/en-GB/news/worlds-2026-primer) | Manter o motor atual para 2026 e cadastrar as regras da próxima edição após a publicação oficial. |
+| Torneio     | Referência de 2026                                                                                                                                                                                 | O que implementar                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| First Stand | Oito equipes em dois grupos de dupla eliminação, seguidos por semifinais e final. Séries MD5. [Regulamento e guia](https://lolesports.com/en-GB/news/fst-2026-primer)                              | Encadear vencedores e perdedores nos grupos e cruzar os classificados nas semifinais.                    |
+| MSI         | Play-in e chave principal com repescagem. [Agenda e formato](https://lolesports.com/en-US/news/msi-and-worlds-updates)                                                                             | Permitir entradas diretas, encaminhar derrotados à chave inferior e avançar os classificados do play-in. |
+| EWC         | Quatro grupos GSL com 16 equipes, oito classificados, mata-mata e disputa de terceiro lugar. MD1, MD3 e MD5. [Regulamento](https://resources.esportsworldcup.com/en/competitive-ops/rulebooks/lol) | Reaproveitar a progressão de grupos, parametrizar o tamanho das séries e validar o sorteio dos playoffs. |
+| Worlds      | Play-in, suíço e mata-mata. [Guia de 2026](https://lolesports.com/en-GB/news/worlds-2026-primer)                                                                                                   | Manter o motor atual para 2026 e cadastrar as regras da próxima edição após a publicação oficial.        |
 
 ## Primeira implementação
 
