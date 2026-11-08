@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, Star, Trophy } from "lucide-react";
 import { useState } from "react";
 import Header from "./header";
@@ -167,7 +168,15 @@ export function TournamentSidebar() {
 				<div className="catalog-empty">
 					<Trophy size={27} />
 					<h3>Valorant chega depois</h3>
-					<p>O primeiro campeonato disponível é o Worlds 2026 de LoL.</p>
+					<p>Confira as datas das classificatórias e dos torneios do VCT.</p>
+					<Link
+						to="/calendario"
+						search={{ game: "valorant" }}
+						className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#144e42] hover:underline"
+					>
+						Ver calendário de Valorant{" "}
+						<ChevronRight size={14} aria-hidden="true" />
+					</Link>
 				</div>
 			)}
 		</aside>

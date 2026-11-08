@@ -17,9 +17,11 @@ import {
 } from "@esports-simulator/api/worlds/model";
 import seed from "@esports-simulator/api/worlds/seed.json";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
 	ArrowDownToLine,
 	ArrowUpRight,
+	CalendarDays,
 	Check,
 	ChevronRight,
 	Dices,
@@ -379,6 +381,12 @@ function Editor({
 						<div className="tournament-title">
 							<h1>Worlds 2026</h1>
 						</div>
+						<Link
+							to="/calendario"
+							className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-[#144e42] hover:underline"
+						>
+							<CalendarDays size={14} aria-hidden="true" /> Calendário
+						</Link>
 					</div>
 					<span className="demo-badge">
 						{snapshot.source === "admin"
