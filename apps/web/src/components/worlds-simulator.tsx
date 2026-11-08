@@ -33,6 +33,7 @@ import {
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { client, orpc } from "@/utils/orpc";
+import { ChampionCelebration } from "./champion-celebration";
 import { TournamentBracket } from "./tournament-bracket";
 import { TournamentRounds } from "./tournament-rounds";
 import { TournamentSidebar } from "./tournament-sidebar";
@@ -489,6 +490,9 @@ function Editor({
 				{phase === "knockout" ? (
 					<>
 						<h2 className="sr-only">Playoffs</h2>
+						{champion && (
+							<ChampionCelebration key={champion.id} team={champion} />
+						)}
 						{!playoffMatches.some((match) => match.teams.some(Boolean)) && (
 							<div className="qualification-hint">
 								<Info size={16} />
