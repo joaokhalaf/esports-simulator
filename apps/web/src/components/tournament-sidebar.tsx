@@ -167,8 +167,15 @@ export function TournamentSidebar() {
 			) : (
 				<div className="catalog-empty">
 					<Trophy size={27} />
-					<h3>Valorant chega depois</h3>
-					<p>Confira as datas das classificatórias e dos torneios do VCT.</p>
+					<h3>VCT Americas</h3>
+					<p>Classificatórias para o Kickoff 2027.</p>
+					<Link
+						to="/simulacoes/americas"
+						className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#144e42] hover:underline"
+					>
+						Simular classificatórias{" "}
+						<ChevronRight size={14} aria-hidden="true" />
+					</Link>
 					<Link
 						to="/calendario"
 						search={{ game: "valorant" }}

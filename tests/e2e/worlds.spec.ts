@@ -269,7 +269,7 @@ test("mobile contains the bracket scroll and the championship catalog works", as
 	await expect(page.locator(".championship-item")).toHaveCount(7);
 	await page.getByRole("tab", { name: "Valorant", exact: true }).click();
 	await expect(
-		page.getByRole("heading", { name: "Valorant chega depois" }),
+		page.getByRole("heading", { name: "VCT Americas" }),
 	).toBeVisible();
 	await page.goto("/?scenario=00000000-0000-4000-8000-000000000000");
 	await expect(
