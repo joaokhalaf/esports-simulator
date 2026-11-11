@@ -13,6 +13,7 @@ export default Alchemy.Stack(
 		});
 		const web = yield* Cloudflare.Worker("web", {
 			main: "../../apps/server/src/worker.ts",
+			crons: ["*/5 * * * *"],
 			compatibility: { date: "2026-10-27", flags: ["nodejs_compat"] },
 			assets: {
 				directory: "../../apps/web/dist",

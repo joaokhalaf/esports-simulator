@@ -12,6 +12,7 @@ import {
 } from "../worlds/model";
 import { importWorlds, makeSnapshot } from "../worlds/riot";
 import seed from "../worlds/seed.json";
+import { syncWorldsResults } from "../worlds/sync";
 
 const initial = validateSnapshot(seed);
 const adminProcedure = protectedProcedure.use(async ({ context, next }) => {
@@ -46,10 +47,11 @@ export const worldsRouter = {
 	}),
 	live: publicProcedure.handler(async ({ context }) => {
 		try {
-			const snapshot = await importWorlds();
+			let snapshot = await importWorlds();
 			// An import is append-only; publishing never rewrites an existing scenario.
 			try {
-				await repository.publishSnapshot(context.db, snapshot, snapshot);
+				snapshot = (await syncWorldsResults(context.db, async () => snapshot))
+					.snapshot;
 			} catch {
 				/* Local simulation remains available without a database. */
 			}
