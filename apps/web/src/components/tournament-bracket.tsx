@@ -21,7 +21,7 @@ export function MatchCard({
 	index,
 	placeholders,
 }: {
-	match: SimMatch;
+	match: Pick<SimMatch, "teams" | "bestOf" | "score" | "origin">;
 	teams: Map<string, Team>;
 	onPick: (score: Score | null) => void;
 	compact?: boolean;
@@ -74,23 +74,25 @@ export function MatchCard({
 							aria-pressed={selected}
 						>
 							<span
-								className={`team-logo ${team && ["G2", "DK", "TSW"].includes(team.code) ? "logo-monochrome" : ""}`}
+								className={`team-logo ${team && !team.image ? "logo-failed" : ""} ${team && ["G2", "DK", "TSW"].includes(team.code) ? "logo-monochrome" : ""}`}
 							>
 								{team ? (
 									<>
 										<span className="team-monogram">
 											{team.code.slice(0, 2)}
 										</span>
-										<img
-											src={team.image}
-											alt=""
-											onError={(e) => {
-												e.currentTarget.style.display = "none";
-												e.currentTarget.parentElement?.classList.add(
-													"logo-failed",
-												);
-											}}
-										/>
+										{team.image && (
+											<img
+												src={team.image}
+												alt=""
+												onError={(e) => {
+													e.currentTarget.style.display = "none";
+													e.currentTarget.parentElement?.classList.add(
+														"logo-failed",
+													);
+												}}
+											/>
+										)}
 									</>
 								) : (
 									<Shield size={26} strokeWidth={1.3} />
