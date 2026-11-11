@@ -58,6 +58,18 @@ O valor do segredo de autenticação precisa corresponder ao usado no deploy man
 
 Push em `master` publica homologação após os checks. Tags `vMAJOR.MINOR.PATCH` de commits pertencentes ao histórico de `master` publicam produção. O workflow `CD` também permite repetir o deploy da branch principal ou de uma tag válida. As credenciais são usadas apenas no job de deploy; os testes de PR usam dados locais descartáveis.
 
+## Atualização automática de resultados
+
+O Worker exporta `scheduled()` e o Alchemy configura o cron `*/5 * * * *`. A cada cinco minutos, o coletor importa e valida o Worlds antes de publicar uma versão diferente no D1. Dados iguais não são republicados; falhas da fonte ou do banco preservam a versão existente. O cache do adaptador também é de cinco minutos.
+
+`GET /api/stream` abre uma conexão SSE pública. A conexão consulta a versão publicada no banco a cada 15 segundos, envia snapshots novos e heartbeats quando não há mudanças, e é renovada após cerca de 45 segundos. O navegador reconecta automaticamente, usando o último ID recebido para evitar reenvios. A consulta ao banco compartilhado permite funcionar entre instâncias do Worker sem um registro de clientes em memória. Essa primeira versão faz leituras por conexão; um distribuidor com Durable Objects pode ser avaliado se o número de conexões crescer.
+
+No modo **Situação atual**, a interface aplica as novidades sem recarregar e preserva palpites compatíveis. **Do início** continua livre, com aplicação explícita das novas versões. Dados atrasados e mensagens inválidas são ignorados. Abas ocultas pausam a conexão e consultam a versão atual ao retornar. O menu `⋯` mantém uma atualização manual para recuperação.
+
+O evento `coverage` informa que o Worlds usa coleta automática e que o VCT Americas ainda usa base manual. O stream não coleta resultados de Valorant nem presume que essas fontes já estejam integradas.
+
+No Node.js, o servidor também coleta ao iniciar e a cada cinco minutos; esse agendamento é desativado com `NODE_ENV=test`. No Wrangler local, o cron precisa ser disparado pelo mecanismo de testes de scheduled events. O deploy só ativa o cron remoto quando essa revisão da infraestrutura for publicada.
+
 ## Banco, migração e recuperação
 
 As migrações D1 ficam em `packages/db/src/d1/migrations`, separadas das migrações PostgreSQL. São aplicadas pelo recurso D1 do Alchemy antes da publicação do Worker. Migrações aplicadas não devem ser editadas; mudanças futuras precisam de arquivos adicionais compatíveis com a versão anterior da aplicação. Não execute os arquivos PostgreSQL no D1.

@@ -18,5 +18,6 @@
       "migrations_dir": "../../packages/db/src/d1/migrations"
     }
   ],
+  "triggers": { "crons": ["*/5 * * * *"] },
   "vars": { "PUBLIC_URL": "http://localhost:3101" }
 }

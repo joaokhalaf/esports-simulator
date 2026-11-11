@@ -17,11 +17,9 @@ import {
 } from "@esports-simulator/api/worlds/model";
 import seed from "@esports-simulator/api/worlds/seed.json";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import {
 	ArrowDownToLine,
 	ArrowUpRight,
-	CalendarDays,
 	Check,
 	ChevronRight,
 	Dices,
@@ -32,8 +30,16 @@ import {
 	ShieldCheck,
 	Undo2,
 } from "lucide-react";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+	useEffect,
+	useEffectEvent,
+	useId,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { toast } from "sonner";
+import { ENV } from "@/env.public";
 import { client, orpc } from "@/utils/orpc";
 import { ChampionCelebration } from "./champion-celebration";
 import { TournamentBracket } from "./tournament-bracket";
@@ -126,6 +132,7 @@ function Editor({
 	const [phase, setPhase] = useState<Phase>("knockout");
 	const [history, setHistory] = useState<Draft[]>([]);
 	const [busy, setBusy] = useState(false);
+	const [syncStatus, setSyncStatus] = useState("Conectando atualizações…");
 	const [candidate, setCandidate] = useState<Snapshot | null>(null);
 	const [localError, setLocalError] = useState(false);
 	const simulation = useMemo(
@@ -164,7 +171,80 @@ function Editor({
 			setLocalError(true);
 		}
 	}, [snapshot, scenario]);
-	function start(mode: Scenario["mode"], base = snapshot) {
+	const receiveResults = useEffectEvent((value: unknown) => {
+		let imported: Snapshot;
+		try {
+			imported = validateSnapshot(value);
+		} catch {
+			return;
+		}
+		const previous = {
+			snapshot: currentSnapshot.current,
+			scenario: currentScenario.current,
+		};
+		// Ignore duplicates and stale deliveries, including fallback data after storage failure.
+		if (
+			imported.id === previous.snapshot.id ||
+			new Date(imported.importedAt).getTime() <
+				new Date(previous.snapshot.importedAt).getTime()
+		)
+			return;
+		setCandidate((current) =>
+			!current ||
+			new Date(imported.importedAt).getTime() >=
+				new Date(current.importedAt).getTime()
+				? imported
+				: current,
+		);
+		if (previous.scenario.mode !== "current") return;
+		const next = updateResults(imported, previous.scenario);
+		currentSnapshot.current = imported;
+		currentScenario.current = next;
+		setHistory((items) => [...items, previous]);
+		setSnapshot(imported);
+		setScenario(next);
+		toast.success("Resultados atualizados automaticamente.", {
+			id: "worlds-auto-results",
+			description: "Palpites compatíveis preservados.",
+		});
+	});
+	useEffect(() => {
+		if (latestSnapshot) receiveResults(latestSnapshot);
+	}, [latestSnapshot]);
+	useEffect(() => {
+		if (typeof EventSource === "undefined") return;
+		let source: EventSource | undefined;
+		const connect = () => {
+			source?.close();
+			if (document.hidden) {
+				setSyncStatus("Atualização pausada");
+				return;
+			}
+			source = new EventSource(
+				`${ENV.VITE_SERVER_URL.replace(/\/$/, "")}/api/stream`,
+				{ withCredentials: true },
+			);
+			source.onopen = () => setSyncStatus("Atualização automática");
+			source.onerror = () => setSyncStatus("Reconectando atualizações…");
+			source.addEventListener("worlds", (event) => {
+				try {
+					receiveResults(JSON.parse((event as MessageEvent).data));
+				} catch {
+					/* Keep the current scenario on malformed data. */
+				}
+			});
+		};
+		connect();
+		document.addEventListener("visibilitychange", connect);
+		return () => {
+			source?.close();
+			document.removeEventListener("visibilitychange", connect);
+		};
+	}, []);
+	function start(
+		mode: Scenario["mode"],
+		base = mode === "current" ? available : snapshot,
+	) {
 		if (
 			Object.keys(scenario.picks).length &&
 			!window.confirm(
@@ -176,7 +256,7 @@ function Editor({
 		setSnapshot(base);
 		setScenario(newScenario(mode));
 		setPhase(mode === "current" ? "swiss" : "playin");
-		setCandidate(null);
+		if (mode === "current") setCandidate(null);
 	}
 	function applyResults(imported: Snapshot) {
 		const previous = {
@@ -371,29 +451,7 @@ function Editor({
 	return (
 		<div className="lab-layout">
 			<main className="worlds-app">
-				<section className="tournament-heading">
-					<img
-						className="worlds-emblem"
-						src="https://static.lolesports.com/leagues/1592594612171_WorldsDarkBG.png"
-						alt=""
-					/>
-					<div>
-						<div className="tournament-title">
-							<h1>Worlds 2026</h1>
-						</div>
-						<Link
-							to="/calendario"
-							className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-[#144e42] hover:underline"
-						>
-							<CalendarDays size={14} aria-hidden="true" /> Calendário
-						</Link>
-					</div>
-					<span className="demo-badge">
-						{snapshot.source === "admin"
-							? "Dados ajustados"
-							: "Dados importados"}
-					</span>
-				</section>
+				<h1 className="sr-only">Worlds 2026</h1>
 				<nav className="phase-tabs" aria-label="Fases do campeonato">
 					{phases.map((item) => (
 						<button
@@ -473,6 +531,14 @@ function Editor({
 								<MoreHorizontal size={19} />
 							</summary>
 							<div>
+								<button
+									type="button"
+									aria-label="Desfazer última alteração"
+									disabled={!history.length}
+									onClick={undo}
+								>
+									<Undo2 size={15} /> Desfazer
+								</button>
 								<button type="button" disabled={busy} onClick={refresh}>
 									<ArrowDownToLine size={15} />
 									Atualizar resultados reais
@@ -657,40 +723,16 @@ function Editor({
 						{simulation.blocked}
 					</p>
 				)}
-				<div className="board-footnote">
-					<span>
-						<Info size={17} />
-						Clique em um time para avançar · Você pode alterar seus palpites.
-					</span>
-					<button
-						type="button"
-						className="footer-undo"
-						aria-label="Desfazer última alteração"
-						disabled={!history.length}
-						onClick={undo}
-					>
-						<Undo2 size={14} />
-						Desfazer
-					</button>
-					<span>
-						{scenario.mode === "current"
-							? "Resultados reais preservados"
-							: "Cenário desde o início"}{" "}
-						· {simulated} simulados
-					</span>
-				</div>
+
 				<div className="source-line">
 					<span>
 						LoL Esports · Dados importados em {date(snapshot.importedAt)}
 					</span>
-					<button type="button" disabled={busy} onClick={refresh}>
-						{busy ? (
-							<LoaderCircle size={13} className="animate-spin" />
-						) : (
-							<ArrowDownToLine size={13} />
-						)}
-						Atualizar resultados reais
-					</button>
+					<span>
+						{scenario.mode === "beginning"
+							? "Cenário livre · atualização opcional"
+							: syncStatus}
+					</span>
 				</div>
 				<footer className="worlds-footer">
 					Projeto independente, não endossado pela Riot Games. League of Legends

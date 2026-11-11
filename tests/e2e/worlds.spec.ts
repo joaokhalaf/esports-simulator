@@ -39,9 +39,11 @@ test("import applies real results to a beginning scenario and can undo the entir
 		localStorage.getItem("worlds-2026-draft-v1"),
 	);
 	const refresh = page
-		.locator(".source-line")
+		.locator(".scenario-options")
 		.getByRole("button", { name: "Atualizar resultados reais" });
+	await page.getByLabel("Opções do cenário").click();
 	await refresh.click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect(
 		page.getByText("Resultados reais aplicados ao cenário.", { exact: true }),
 	).toBeVisible();
@@ -55,14 +57,18 @@ test("import applies real results to a beginning scenario and can undo the entir
 			}),
 		)
 		.toEqual({ id: imported.id, mode: "current" });
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect
 		.poll(() =>
 			page.evaluate(() => localStorage.getItem("worlds-2026-draft-v1")),
 		)
 		.toBe(before);
 	await expect(page.locator(".is-simulated")).toHaveCount(1);
+	await page.getByLabel("Opções do cenário").click();
 	await refresh.click();
+	await page.getByLabel("Opções do cenário").click();
 	await page.reload();
 	await expect
 		.poll(async () =>
@@ -221,7 +227,9 @@ test("reference layout supports connected playoffs, inline score editing and und
 		.getByRole("button", { name: "Confirmar", exact: true })
 		.click();
 	await expect(page.locator(".stage-semi .team-choice:enabled")).toHaveCount(4);
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect(page.locator(".stage-quarter .is-simulated")).toHaveCount(3);
 	await page
 		.getByRole("button", { name: "Simular restantes", exact: true })
@@ -509,7 +517,9 @@ test("reset uses a confirmation toast with cancel, approval and undo", async ({
 	await toast.getByRole("button", { name: "Reiniciar", exact: true }).click();
 	await expect(page.locator(".is-simulated")).toHaveCount(0);
 	await expect(reset).toBeDisabled();
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect(page.locator(".is-simulated")).toHaveCount(2);
 	await page.reload();
 	await swiss(page);
@@ -549,7 +559,9 @@ test("round tabs advance after the final pick and Swiss leads into playoffs", as
 		swissTabs.getByRole("tab", { name: /^Rodada 5/ }),
 	).toHaveAttribute("aria-selected", "true");
 	await expect(page.locator(".selected-round .match-card")).toHaveCount(3);
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect(
 		swissTabs.getByRole("tab", { name: /^Rodada 4/ }),
 	).toHaveAttribute("aria-selected", "true");
@@ -611,7 +623,9 @@ test("CFO advances immediately into round 5 while the other round 4 matches rema
 	await expect(round5.locator(".swiss-advancing-team")).not.toContainText(
 		"CFO",
 	);
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect(round5.locator(".swiss-advancing-team")).toContainText("CFO");
 	await page.reload();
 	await swiss(page);
@@ -642,7 +656,9 @@ test("visible redraw changes the current round, supports cancel and undo, and pe
 	await redraw.click();
 	await expect.poll(pairings).not.toEqual(original);
 	await expect(page.locator(".is-simulated")).toHaveCount(0);
+	await page.getByLabel("Opções do cenário").click();
 	await page.getByRole("button", { name: "Desfazer última alteração" }).click();
+	await page.getByLabel("Opções do cenário").click();
 	await expect.poll(pairings).toEqual(original);
 	await pickFirstReady(page);
 	await redraw.click();

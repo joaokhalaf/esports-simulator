@@ -2,6 +2,7 @@ import type { D1Database, Fetcher } from "@cloudflare/workers-types";
 import { createCloudflareAuth } from "@esports-simulator/auth/cloudflare";
 import { createD1Store } from "@esports-simulator/db/d1/index";
 import { createApp } from "./app";
+import { syncWorldsResults } from "./results-sync";
 
 export type WorkerEnv = {
 	DB: D1Database;
@@ -12,6 +13,9 @@ export type WorkerEnv = {
 };
 
 export default {
+	async scheduled(_controller: unknown, env: WorkerEnv) {
+		await syncWorldsResults(createD1Store(env.DB));
+	},
 	async fetch(request: Request, env: WorkerEnv): Promise<Response> {
 		const path = new URL(request.url).pathname;
 		if (path === "/health") return new Response("OK");

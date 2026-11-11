@@ -7,8 +7,8 @@ import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-
 import { type ApiServices, createContext } from "./context";
+import { resultsStream } from "./results-stream";
 
 export function createApp(
 	services: ApiServices,
@@ -22,10 +22,12 @@ export function createApp(
 		cors({
 			origin: config.CORS_ORIGIN,
 			allowMethods: ["GET", "POST", "OPTIONS"],
-			allowHeaders: ["Content-Type", "Authorization"],
+			allowHeaders: ["Content-Type", "Authorization", "Last-Event-ID"],
 			credentials: true,
 		}),
 	);
+
+	app.get("/api/stream", (c) => resultsStream(c, services.db));
 
 	app.on(["POST", "GET"], "/api/auth/*", async (c) =>
 		services.auth.handler(c.req.raw),
