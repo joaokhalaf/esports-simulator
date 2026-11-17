@@ -77,5 +77,30 @@
 		"parser": {
 			"tailwindDirectives": true
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["apps/web/src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"@esports-simulator/db": "Frontend não acessa persistência. Use o cliente API ou operações públicas de domínio."
+								},
+								"patterns": [
+									{
+										"group": ["@esports-simulator/db/*"],
+										"message": "Frontend não acessa persistência. Use o cliente API ou operações públicas de domínio."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
 }
