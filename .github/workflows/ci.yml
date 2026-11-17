@@ -51,7 +51,7 @@ jobs:
           cache: pnpm
       - name: Install dependencies and generate env types
         run: pnpm install --frozen-lockfile
-      - name: Biome
+      - name: Biome and architecture policy checks
         run: pnpm run ci
       - name: Apply migrations to isolated database
         run: pnpm --filter @esports-simulator/db run db:migrate

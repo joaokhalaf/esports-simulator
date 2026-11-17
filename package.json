@@ -27,17 +27,19 @@
 		"env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
 		"postinstall": "varlock codegen --path ./apps/web/ && varlock codegen --path ./apps/server/ && varlock codegen --path ./packages/db/",
 		"auth:generate": "cd apps/server && pnpm run auth:generate",
-		"check": "biome check .",
+		"check": "biome check . && pnpm run lint:architecture",
 		"check:fix": "biome check --write .",
-		"ci": "biome ci .",
-		"lint": "biome lint .",
+		"ci": "biome ci . && pnpm run lint:architecture && pnpm run test:architecture",
+		"lint": "biome lint . && pnpm run lint:architecture",
 		"format": "biome format --write .",
 		"format:check": "biome format .",
 		"build:cloudflare": "pnpm --filter web run build:cloudflare && pnpm --filter server run build:worker",
 		"test:worker": "pnpm --filter server run test:worker",
 		"dev:cloudflare": "pnpm --filter server exec wrangler dev --local --port 3101",
 		"db:migrate:local": "pnpm --filter server exec wrangler d1 migrations apply worlds-local --local",
-		"test:e2e:cloudflare": "playwright test --config playwright.cloudflare.config.ts"
+		"test:e2e:cloudflare": "playwright test --config playwright.cloudflare.config.ts",
+		"lint:architecture": "node scripts/check-architecture.mjs",
+		"test:architecture": "node --test scripts/check-architecture.test.mjs"
 	},
 	"dependencies": {
 		"zod": "catalog:"
