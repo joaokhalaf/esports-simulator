@@ -170,6 +170,13 @@ export function TournamentSidebar() {
 					<h3>VCT Americas</h3>
 					<p>Classificatórias para o Kickoff 2027.</p>
 					<Link
+						to="/simulacoes/brasil"
+						className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#144e42] hover:underline"
+					>
+						Simular qualificatório brasileiro{" "}
+						<ChevronRight size={14} aria-hidden="true" />
+					</Link>
+					<Link
 						to="/simulacoes/americas"
 						className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[#144e42] hover:underline"
 					>
