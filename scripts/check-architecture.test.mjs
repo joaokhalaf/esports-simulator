@@ -7,6 +7,8 @@ import test from "node:test";
 import { findEffects, violations } from "./check-architecture.mjs";
 
 const forbidden = [
+	'import * as R from "react"; const ReactAlias = R satisfies typeof R; ReactAlias.useEffect(() => {}, []);',
+	'const { "useEffect": effect } = require("react"); effect(() => {}, []);',
 	'import { useEffect } from "react"; useEffect(() => {}, []);',
 	'import { useEffect as effect } from "react"; effect(() => {}, []);',
 	'import React from "react"; React.useEffect(() => {}, []);',

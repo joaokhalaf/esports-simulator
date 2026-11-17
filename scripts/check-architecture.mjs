@@ -42,6 +42,7 @@ export function findEffects(source) {
 			(ts.isParenthesizedExpression(node) ||
 				ts.isAwaitExpression(node) ||
 				ts.isAsExpression(node) ||
+				ts.isSatisfiesExpression(node) ||
 				ts.isNonNullExpression(node))
 		)
 			node = node.expression;
@@ -136,7 +137,8 @@ export function findEffects(source) {
 				for (const item of node.name.elements)
 					if (
 						ts.isIdentifier(item.name) &&
-						(item.propertyName ?? item.name).getText(file) === "useEffect"
+						((item.propertyName ?? item.name).text ??
+							(item.propertyName ?? item.name).getText(file)) === "useEffect"
 					) {
 						bind(hooks, item.name);
 						add(item);
