@@ -129,6 +129,12 @@ function ValorantCalendar() {
 					2027. As datas seguem o calendário local de cada organizador.
 				</p>
 				<Link
+					to="/simulacoes/brasil"
+					className="mt-5 mr-3 inline-flex rounded-md bg-white px-3 py-2 text-sm font-semibold text-[#144e42] hover:bg-[#e6f2e9]"
+				>
+					Simular qualificatório brasileiro
+				</Link>
+				<Link
 					to="/simulacoes/americas"
 					className="mt-4 inline-flex rounded-md bg-white px-3 py-2 text-sm font-semibold text-[#144e42] hover:bg-[#e6f2e9]"
 				>

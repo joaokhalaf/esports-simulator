@@ -1,4 +1,5 @@
 import type { D1Database, Fetcher } from "@cloudflare/workers-types";
+import { syncBrazilResults } from "@esports-simulator/api/vct/sync";
 import { createCloudflareAuth } from "@esports-simulator/auth/cloudflare";
 import { createD1Store } from "@esports-simulator/db/d1/index";
 import { createApp } from "./app";
@@ -14,7 +15,15 @@ export type WorkerEnv = {
 
 export default {
 	async scheduled(_controller: unknown, env: WorkerEnv) {
-		await syncWorldsResults(createD1Store(env.DB));
+		const db = createD1Store(env.DB);
+		const results = await Promise.allSettled([
+			syncWorldsResults(db),
+			syncBrazilResults(db),
+		]);
+		if (results.some((result) => result.status === "rejected"))
+			throw new Error(
+				"Coleta incompleta; últimos resultados válidos preservados.",
+			);
 	},
 	async fetch(request: Request, env: WorkerEnv): Promise<Response> {
 		const path = new URL(request.url).pathname;

@@ -1,6 +1,8 @@
 import { americasSnapshotVersion } from "@esports-simulator/api/vct/published";
+import { validateVctSnapshot } from "@esports-simulator/api/vct/results";
 import { validateSnapshot } from "@esports-simulator/api/worlds/model";
 import seed from "@esports-simulator/api/worlds/seed.json";
+import { latestBrazilResults } from "@esports-simulator/db/vct";
 import * as repository from "@esports-simulator/db/worlds";
 import type { Context } from "hono";
 import { streamSSE } from "hono/streaming";
@@ -9,6 +11,7 @@ import { streamSSE } from "hono/streaming";
 export function resultsStream(c: Context, db: repository.WorldsDatabase) {
 	const response = streamSSE(c, async (stream) => {
 		let last = c.req.header("Last-Event-ID") ?? "";
+		let lastBrazil = "";
 		let wake: (() => void) | undefined;
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		stream.onAbort(() => {
@@ -21,6 +24,7 @@ export function resultsStream(c: Context, db: repository.WorldsDatabase) {
 				worlds: "automatic",
 				americas: "manual",
 				americasVersion: americasSnapshotVersion,
+				brazil: "automatic-vlr",
 			}),
 			retry: 3000,
 		});
@@ -52,6 +56,23 @@ export function resultsStream(c: Context, db: repository.WorldsDatabase) {
 						}),
 					});
 			}
+			if (tick < 3 && !stream.aborted)
+				try {
+					const payload = await latestBrazilResults(db);
+					if (payload) {
+						const snapshot = validateVctSnapshot(payload);
+						if (snapshot.id !== lastBrazil) {
+							await stream.writeSSE({
+								event: "brazil",
+								data: JSON.stringify(snapshot),
+							});
+							lastBrazil = snapshot.id;
+						}
+					}
+				} catch {
+					if (!stream.aborted)
+						await stream.writeSSE({ event: "brazil-unavailable", data: "{}" });
+				}
 			if (tick < 3 && !stream.aborted)
 				await new Promise<void>((resolve) => {
 					wake = resolve;
