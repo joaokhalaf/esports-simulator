@@ -1,3 +1,4 @@
+import { syncBrazilResults } from "@esports-simulator/api/vct/sync";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app";
 import { ENV } from "./env.server";
@@ -16,7 +17,14 @@ if (process.env.NODE_ENV !== "test") {
 		if (running) return;
 		running = true;
 		try {
-			await syncWorldsResults(db);
+			const results = await Promise.allSettled([
+				syncWorldsResults(db),
+				syncBrazilResults(db),
+			]);
+			if (results.some((result) => result.status === "rejected"))
+				console.error(
+					"Coleta incompleta; últimos resultados válidos preservados.",
+				);
 		} catch {
 			console.error(
 				"Falha na sincronização do Worlds; últimos dados preservados.",

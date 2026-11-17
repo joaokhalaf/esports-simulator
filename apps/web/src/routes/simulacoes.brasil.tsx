@@ -8,6 +8,7 @@ import {
 	simulateBrazil,
 	simulateBrazilStage,
 } from "@esports-simulator/api/vct/brazil";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	ArrowLeft,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { MatchCard } from "@/components/tournament-bracket";
+import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/simulacoes/brasil")({
 	component: BrazilQualifier,
@@ -33,6 +35,7 @@ const tabs = [
 	{ id: "playoffs", label: "Playoffs" },
 	{ id: "results", label: "Resultados das seletivas" },
 	{ id: "teams", label: "Participantes" },
+	{ id: "vlr", label: "Partidas · VLR" },
 ] as const;
 const button =
 	"inline-flex items-center justify-center gap-2 rounded-lg border border-[#b7c9c0] bg-white px-4 py-2 text-sm font-semibold text-[#144e42] hover:bg-[#e6f2e9] disabled:cursor-not-allowed disabled:opacity-40";
@@ -53,6 +56,12 @@ function BrazilQualifier() {
 	const [history, setHistory] = useState<BrazilDraft[]>([]);
 	const [tab, setTab] = useState<(typeof tabs)[number]["id"]>("swiss");
 	const [storageError, setStorageError] = useState(false);
+	const live = useQuery({
+		...orpc.vct.brazil.queryOptions(),
+		refetchInterval: 60_000,
+		staleTime: 30_000,
+	});
+	const collected = live.data?.snapshot;
 	const result = simulateBrazil(draft);
 	const phase = tab === "swiss" || tab === "playoffs" ? tab : null;
 	const matches = result.matches.filter((match) => match.stage === phase);
@@ -209,8 +218,9 @@ function BrazilQualifier() {
 						</div>
 						<p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
 							Pareamentos e seeds deste cenário são simulados, não representam o
-							sorteio oficial. Os resultados das seletivas ficam preservados.
-							Não há atualização ao vivo.
+							sorteio oficial. Os resultados das seletivas ficam preservados. A
+							coleta do VLR fica na aba Partidas · VLR e não altera este
+							cenário.
 						</p>
 						{storageError && (
 							<p role="alert" className="mt-3 text-sm text-red-800">
@@ -364,11 +374,98 @@ function BrazilQualifier() {
 					</section>
 				)}
 
+				{tab === "vlr" && (
+					<section className="mt-6" aria-label="Partidas coletadas do VLR">
+						<h2 className="text-xl font-bold">Partidas brasileiras · VLR</h2>
+						<p className="mt-2 text-sm text-slate-600">
+							Consulta periódica ao VLR, sem alterar seus palpites ou os
+							pareamentos simulados. Placares parciais não são resultados
+							finais.
+						</p>
+						{live.isPending && (
+							<p className="mt-4" role="status">
+								Carregando resultados…
+							</p>
+						)}
+						{(live.isError || live.data?.storageAvailable === false) && (
+							<p className="mt-4" role="status">
+								Coleta indisponível. A base curada e sua simulação continuam
+								disponíveis.
+							</p>
+						)}
+						{!live.isPending && !collected && (
+							<p className="mt-4">
+								Ainda não há coleta publicada. Consulte os resultados
+								confirmados das seletivas.
+							</p>
+						)}
+						{collected && (
+							<>
+								<p className="mt-3 text-sm">
+									Última coleta válida:{" "}
+									<time dateTime={collected.collectedAt}>
+										{new Date(collected.collectedAt).toLocaleString("pt-BR")}
+									</time>
+									. {collected.matches.length} partidas.
+								</p>
+								{Date.now() - Date.parse(collected.collectedAt) >
+									15 * 60_000 && (
+									<p className="mt-2 text-sm text-amber-800">
+										Dados podem estar desatualizados; última versão válida
+										preservada.
+									</p>
+								)}
+								{collected.events.find((e) => e.id === 3183)?.count === 0 && (
+									<p className="mt-3 text-sm">
+										O VLR ainda não publicou partidas da fase suíça/playoffs.
+									</p>
+								)}
+								<div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+									{collected.matches.map((match) => (
+										<article
+											key={match.id}
+											className="rounded-xl border border-[#dce2e7] bg-white p-4"
+											aria-label={`VLR: ${match.teams.join(" contra ")}`}
+										>
+											<p className="text-xs font-bold text-[#144e42]">
+												{match.stage} · {match.round}
+											</p>
+											<p className="mt-3 text-sm font-bold">
+												{match.teams.join(" × ")}
+											</p>
+											<p className="mt-2 text-xs">
+												{match.status === "live"
+													? "Em andamento · placar parcial"
+													: match.status === "upcoming"
+														? "Agendada"
+														: "Encerrada segundo o VLR"}
+											</p>
+											<p className="mt-2 font-bold">
+												{match.outcome.kind === "reported-score"
+													? match.outcome.score.join(" – ")
+													: match.outcome.kind === "forfeit"
+														? `W.O. · ${match.teams[match.outcome.winner]}`
+														: "Placar não informado"}
+											</p>
+											<a
+												className="mt-3 inline-block text-sm text-[#144e42] underline"
+												href={match.url}
+											>
+												Conferir no VLR
+											</a>
+										</article>
+									))}
+								</div>
+							</>
+						)}
+					</section>
+				)}
+
 				<footer className="mt-10 border-t border-[#dce2e7] pt-5 text-xs leading-5 text-slate-500">
 					<p>
-						Base curada consultada em {brazilSnapshot.checkedAt}. Sem coleta
-						automática. Resultados reais, participantes e cenários são
-						apresentados separadamente.
+						Base curada consultada em {brazilSnapshot.checkedAt}. A aba Partidas
+						· VLR tem coleta periódica independente. Resultados reais,
+						participantes e cenários são apresentados separadamente.
 					</p>
 					<div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
 						{brazilSnapshot.sources.map((source) => (

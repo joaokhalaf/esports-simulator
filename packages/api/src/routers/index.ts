@@ -1,10 +1,12 @@
 import type { RouterClient } from "@orpc/server";
 
 import { protectedProcedure, publicProcedure } from "../index";
+import { vctRouter } from "./vct";
 import { worldsRouter } from "./worlds";
 
 export const appRouter = {
 	worlds: worldsRouter,
+	vct: vctRouter,
 	healthCheck: publicProcedure.handler(() => {
 		return "OK";
 	}),

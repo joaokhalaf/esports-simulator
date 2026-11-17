@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { URL } from "node:url";
 import { convertV4MiniflareOptions, Miniflare } from "miniflare";
 
@@ -30,13 +30,15 @@ export async function createTestRuntime(port?: number) {
 	);
 	try {
 		const binding = await mf.getD1Database("DB");
-		const schema = readFileSync(
-			new URL(
-				"../../../packages/db/src/d1/migrations/0001_initial.sql",
-				import.meta.url,
-			),
-			"utf8",
+		const migrations = new URL(
+			"../../../packages/db/src/d1/migrations/",
+			import.meta.url,
 		);
+		const schema = readdirSync(migrations)
+			.filter((name) => name.endsWith(".sql"))
+			.sort()
+			.map((name) => readFileSync(new URL(name, migrations), "utf8"))
+			.join("\n");
 		await binding.batch(
 			schema
 				.split(";")

@@ -18,11 +18,12 @@
 		"@orpc/openapi": "catalog:",
 		"@orpc/server": "catalog:",
 		"@orpc/zod": "catalog:",
+		"cheerio": "1.2.0",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"tsx": "^4.23.13",
 		"@esports-simulator/config": "workspace:*",
+		"tsx": "^4.23.13",
 		"typescript": "catalog:"
 	}
 }
